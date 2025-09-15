@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import "./app.css";
 import Slideshow from "../components/Slideshow";
 
@@ -112,6 +113,8 @@ export default function Home() {
       if (newSlide !== currentSlideRef.current) {
         currentSlideRef.current = newSlide;
         setCurrentSlide(newSlide);
+        // Add score for scrolling through timeline
+        addScore(25, `timeline-${newSlide}`);
       }
     };
     
@@ -196,6 +199,7 @@ export default function Home() {
           if (entry.isIntersecting) {
             animateCounters();
             statsObserver.unobserve(entry.target);
+            addScore(50, 'stats-section');
           }
         });
       }, { threshold: 0.5 });
@@ -208,7 +212,7 @@ export default function Home() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []); // Empty dependency array ensures this runs only once.
+  }, [timelineEvents.length, addScore]); // Include timelineEvents.length and addScore dependencies
 
   return (
     <main className="jeton-style">
@@ -282,17 +286,20 @@ export default function Home() {
           <div className="hero-text animate-on-scroll">
             {/* Retro Logo Container */}
             <div className="logo-container animate-on-scroll">
-              <img 
+              <Image 
                 src="/FINAl_ps_mat-16-removebg-preview.png" 
                 alt="Packs N' Snacks Logo" 
+                width={280}
+                height={280}
                 className={`logo-image ${isLogoSpinning ? 'spinning' : ''}`}
                 onClick={handleLogoClick}
                 onAnimationEnd={handleLogoAnimationEnd}
+                priority
               />
             </div>
             
             <h2 className="hero-title">
-              PACKS N'<br />SNACKS
+              PACKS N&apos;<br />SNACKS
             </h2>
             <p className="hero-subtitle">
             Trade. Connect. Give Back. 
@@ -346,33 +353,75 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Slideshow Section (between Hero and Choose Your Mission) */}
+      <section className="slideshow-section" style={{ paddingTop: "8rem", paddingBottom: "8rem", background: "linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(255,255,255,0.01) 100%)" }}>
+        <div className="container" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem" }}>
+          <div className="section-header animate-on-scroll">
+            <h2>CHECK OUT OUR LATEST EVENT</h2>
+            <div className="section-decoration"></div>
+          </div>
+          <div className="slideshow-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 1rem" }}>
+            <div style={{ width: "100%", maxWidth: "900px" }}>
+              <Slideshow
+                autoPlayMs={6000}
+                items={[
+                  { type: "video", src: "/8mb.video-eYb-6ZM1JQZA.mp4", alt: "Event highlight video" },
+                  { type: "image", src: "/Packs n Snacks _ Event _ 2025-53.jpg", alt: "Event photo 53" },
+                  { type: "image", src: "/Packs n Snacks _ Event _ 2025-34.jpg", alt: "Event photo 34" },
+                  { type: "image", src: "/Packs n Snacks _ Event _ 2025-144.jpg", alt: "Event photo 144" }
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section with Enhanced Animations */}
       <section className="features-section">
         <div className="container">
           <div className="section-header animate-on-scroll">
-            <h2>Unify your community experience</h2>
+            <h2>CHOOSE YOUR MISSION</h2>
             <div className="section-decoration"></div>
           </div>
           <div className="features-grid">
-            <div className="feature-card animate-on-scroll hover-tilt">
+            <div 
+              className="feature-card animate-on-scroll hover-tilt"
+              onMouseEnter={() => handleCardHover(30, 'feature-events')}
+            >
               <div className="feature-icon">🎯</div>
-              <h3>Events</h3>
-              <p>Join exciting tournaments and community gatherings</p>
+              <h3>EVENTS</h3>
+              <p>Join exciting food-eating competitions and share snacks
+From hot dog contests to cookie challenges, our events are built for fun-and fueled by flavor.</p>
             </div>
-            <div className="feature-card animate-on-scroll hover-tilt" style={{ animationDelay: '0.1s' }}>
+            <div 
+              className="feature-card animate-on-scroll hover-tilt" 
+              style={{ animationDelay: '0.1s' }}
+              onMouseEnter={() => handleCardHover(30, 'feature-giveback')}
+            >
               <div className="feature-icon">🤝</div>
-              <h3>Give Back</h3>
-              <p>Support local families through our meal programs</p>
+              <h3>GIVE BACK</h3>
+              <p>Support families across the U.S. by attending events or entering raffles
+Every ticket purchased and every bite taken helps us provide meals through Feeding&nbsp;America.</p>
             </div>
-            <div className="feature-card animate-on-scroll hover-tilt" style={{ animationDelay: '0.2s' }}>
+            <div 
+              className="feature-card animate-on-scroll hover-tilt" 
+              style={{ animationDelay: '0.2s' }}
+              onMouseEnter={() => handleCardHover(30, 'feature-trade')}
+            >
               <div className="feature-icon">🃏</div>
-              <h3>Trade</h3>
-              <p>Buy, sell, and trade cards with fellow enthusiasts</p>
+              <h3>TRADE</h3>
+              <p>Buy, sell, and trade cards with fellow collectors
+Whether you&apos;re new to the hobby or a seasoned collector, our shows are built for connection-and deals.</p>
             </div>
-            <div className="feature-card animate-on-scroll hover-tilt" style={{ animationDelay: '0.3s' }}>
+            <div 
+              className="feature-card animate-on-scroll hover-tilt" 
+              style={{ animationDelay: '0.3s' }}
+              onMouseEnter={() => handleCardHover(30, 'feature-community')}
+            >
               <div className="feature-icon">💬</div>
-              <h3>Community</h3>
-              <p>Connect with members and share your passion</p>
+              <h3>COMMUNITY</h3>
+              <p>Connect with fellow collectors and share your passion
+We bring together people who love cards, food, and giving back. It&apos;s more than a hobby-it&apos;s a&nbsp;movement.</p>
             </div>
           </div>
         </div>
@@ -384,7 +433,7 @@ export default function Home() {
         <div className="container">
           <div className="impact-content">
             <div className="impact-text animate-on-scroll">
-              <h2>Making a difference across Dupage Valley</h2>
+              <h2>Making a Difference Across the USA</h2>
               <p>Connect with fellow card enthusiasts while supporting families in need.</p>
               <div className="impact-features">
                 <div className="impact-feature animate-item">
@@ -403,17 +452,26 @@ export default function Home() {
             </div>
             <div className="impact-visual animate-on-scroll">
               <div className="stats-showcase">
-                <div className="stat-item pulse-animation">
+                <div 
+                  className="stat-item pulse-animation"
+                  onMouseEnter={() => handleCardHover(20, 'stat-meals')}
+                >
                   <div className="stat-number counter" data-target="60">0</div>
                   <div className="stat-unit">K</div>
                   <div className="stat-label">Meals Provided</div>
                 </div>
-                <div className="stat-item pulse-animation">
+                <div 
+                  className="stat-item pulse-animation"
+                  onMouseEnter={() => handleCardHover(20, 'stat-families')}
+                >
                   <div className="stat-number counter" data-target="1.4">0</div>
                   <div className="stat-unit">K</div>
                   <div className="stat-label">Families Helped</div>
                 </div>
-                <div className="stat-item pulse-animation">
+                <div 
+                  className="stat-item pulse-animation"
+                  onMouseEnter={() => handleCardHover(20, 'stat-events')}
+                >
                   <div className="stat-number counter" data-target="50">0</div>
                   <div className="stat-unit">+</div>
                   <div className="stat-label">Events Hosted</div>
@@ -428,56 +486,71 @@ export default function Home() {
       <section className="process-section">
         <div className="container">
           <div className="section-header animate-on-scroll">
-            <h2>Simple, fast & impactful</h2>
+            <h2>GAME INSTRUCTIONS</h2>
             <div className="section-decoration"></div>
           </div>
           <div className="process-steps animate-on-scroll">
             <div className="process-grid">
-              <div className="process-step">
+              <div 
+                className="process-step"
+                onMouseEnter={() => handleCardHover(15, 'step-join')}
+              >
                 <div className="step-number-container">
                   <div className="step-number">01</div>
                   <div className="step-line"></div>
                 </div>
                 <div className="step-content">
-                  <h3>Join</h3>
+                  <h3>JOIN</h3>
                   <p>Sign up for our community</p>
                 </div>
               </div>
-              <div className="process-step">
+              <div 
+                className="process-step"
+                onMouseEnter={() => handleCardHover(15, 'step-participate')}
+              >
                 <div className="step-number-container">
                   <div className="step-number">02</div>
                   <div className="step-line"></div>
                 </div>
                 <div className="step-content">
-                  <h3>Participate</h3>
+                  <h3>PARTICIPATE</h3>
                   <p>Attend events and trade cards</p>
                 </div>
               </div>
-              <div className="process-step">
+              <div 
+                className="process-step"
+                onMouseEnter={() => handleCardHover(15, 'step-giveback')}
+              >
                 <div className="step-number-container">
                   <div className="step-number">03</div>
                   <div className="step-line"></div>
                 </div>
                 <div className="step-content">
-                  <h3>Give Back</h3>
+                  <h3>GIVE BACK</h3>
                   <p>Help feed families in need</p>
                 </div>
               </div>
-              <div className="process-step">
+              <div 
+                className="process-step"
+                onMouseEnter={() => handleCardHover(15, 'step-connect')}
+              >
                 <div className="step-number-container">
                   <div className="step-number">04</div>
                 </div>
                 <div className="step-content">
-                  <h3>Connect</h3>
+                  <h3>CONNECT</h3>
                   <p>Build lasting friendships</p>
                 </div>
               </div>
-              <div className="process-step">
+              <div 
+                className="process-step"
+                onMouseEnter={() => handleCardHover(15, 'step-grow')}
+              >
                 <div className="step-number-container">
                   <div className="step-number">05</div>
                 </div>
                 <div className="step-content">
-                  <h3>Grow</h3>
+                  <h3>GROW</h3>
                   <p>Expand your collection and impact</p>
                 </div>
               </div>
@@ -490,7 +563,7 @@ export default function Home() {
       <section className="events-section">
         <div className="container">
           <div className="section-header animate-on-scroll">
-            <h2>Our Community Timeline</h2>
+            <h2>UPCOMING EVENTS</h2>
             <p>Scroll down to explore our upcoming events.</p>
             <div className="section-decoration"></div>
           </div>
@@ -503,9 +576,16 @@ export default function Home() {
                       <div className="timeline-slide-content">
                         <div className="timeline-slide-card">
                           <div className="timeline-slide-date">{event.date}</div>
-                          <h3 className="timeline-slide-title">{event.title}</h3>
+                          <div className="difficulty-badge-small">{event.difficulty}</div>
+                          <h3 className="timeline-slide-title" dangerouslySetInnerHTML={{ __html: event.title }}></h3>
                           <p className="timeline-slide-description">{event.description}</p>
-                          <a href="#" className="timeline-slide-cta">{event.cta}</a>
+                          <a 
+                            href="#" 
+                            className="timeline-slide-cta"
+                            onClick={() => handleButtonClick(40, `event-${index}`)}
+                          >
+                            {event.cta}
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -557,10 +637,13 @@ export default function Home() {
       <section className="cta-section">
         <div className="container">
           <div className="cta-content animate-on-scroll">
-            <h2>1,400+ families helped, plus yours.</h2>
+            <h2>1,000+ FAMILIES HELPED. JOIN US TO HELP MORE.</h2>
             <p>It only takes a few minutes to get started.</p>
-            <button className="cta-button primary large magnetic-button">
-              <span>Get Started</span>
+            <button 
+              className="cta-button primary large magnetic-button"
+              onClick={() => handleButtonClick(200, 'final-cta')}
+            >
+              <span>Join Us Now!</span>
               <div className="button-ripple"></div>
             </button>
           </div>

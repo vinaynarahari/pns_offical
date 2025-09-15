@@ -423,7 +423,6 @@ a[href] {
   opacity: 0;
   animation: titleReveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
 }
-
 @keyframes titleReveal {
   to {
     opacity: 1;

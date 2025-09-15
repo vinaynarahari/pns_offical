@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import "./app.css";
+import Slideshow from "../components/Slideshow";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -12,10 +13,13 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const timelineWrapperRef = useRef<HTMLDivElement>(null);
   const [isLogoSpinning, setIsLogoSpinning] = useState(false);
+  const [score, setScore] = useState(0);
+  const [interactedElements, setInteractedElements] = useState(new Set());
   
   const handleLogoClick = () => {
     if (!isLogoSpinning) {
       setIsLogoSpinning(true);
+      addScore(100, 'logo');
     }
   };
 
@@ -25,30 +29,49 @@ export default function Home() {
     }
   };
 
+  const addScore = (points: number, elementId: string) => {
+    if (!interactedElements.has(elementId)) {
+      setScore(prev => prev + points);
+      setInteractedElements(prev => new Set(prev).add(elementId));
+    }
+  };
+
+  const handleButtonClick = (points: number, elementId: string) => {
+    addScore(points, elementId);
+  };
+
+  const handleCardHover = (points: number, elementId: string) => {
+    addScore(points, elementId);
+  };
+
   const timelineEvents = [
     {
       date: "July 26th",
       title: "Cardshow At The Park",
       description: "Join us for a family-friendly outdoor show featuring 100+ vendors, raffles, and a hot dog eating contest.",
-      cta: "Learn More →"
+      cta: "Learn More →",
+      difficulty: "EASY"
     },
     {
       date: "October 25th", 
-      title: "Doughnuts, Go Nuts, Trade Day",
+      title: "Doughnuts, Go Nuts,<br />Trade Day",
       description: "Fuel up on doughnuts and trade cards while supporting food relief efforts in the community.",
-      cta: "Get Involved →"
+      cta: "Get Involved →",
+      difficulty: "MEDIUM"
     },
     {
       date: "December 20th",
       title: "Black Tie Gala", 
       description: "Dress to impress for an evening of elevated collecting, cocktails, and charitable giving.",
-      cta: "Join Us →"
+      cta: "Join Us →",
+      difficulty: "EXPERT"
     },
     {
       date: "June 18",
       title: "The Chip Contest",
       description: "Enter our high-stakes chip-eating showdown while browsing one-of-a-kind trading card finds.",
-      cta: "Register →"
+      cta: "Register →",
+      difficulty: "HARD"
     }
   ];
 
@@ -189,8 +212,18 @@ export default function Home() {
 
   return (
     <main className="jeton-style">
-      <div ref={cursorRef} className="custom-cursor"></div>
-      <div ref={cursorFollowerRef} className="custom-cursor-follower"></div>
+      {/* Ensure hero is first visible content */}
+      <div ref={cursorRef} className="custom-cursor" aria-hidden="true"></div>
+      <div ref={cursorFollowerRef} className="custom-cursor-follower" aria-hidden="true"></div>
+      
+      {/* Retro Score Display */}
+      <div className="retro-score">
+        <div className="score-label">SCORE</div>
+        <div className="score-value">{score.toString().padStart(6, '0')}</div>
+      </div>
+
+      {/* Add offset so hero is not hidden behind any fixed overlays */}
+      <div style={{ height: "24px" }}></div>
       
       {/* Hero Section */}
       <section className="hero-section" ref={heroRef}>
@@ -247,7 +280,7 @@ export default function Home() {
         
         <div className="hero-content">
           <div className="hero-text animate-on-scroll">
-            {/* Cool Brand Title */}
+            {/* Retro Logo Container */}
             <div className="logo-container animate-on-scroll">
               <img 
                 src="/FINAl_ps_mat-16-removebg-preview.png" 
@@ -259,15 +292,11 @@ export default function Home() {
             </div>
             
             <h2 className="hero-title">
-              Rip Packs, <br /> Eat Good
+              PACKS N'<br />SNACKS
             </h2>
             <p className="hero-subtitle">
-              Building community, giving back, and fueling your trading card passions—all in one place.
+            Trade. Connect. Give Back. 
             </p>
-            <button className="cta-button primary magnetic-button">
-              <span>Join the Community</span>
-              <div className="button-ripple"></div>
-            </button>
           </div>
           <div className="hero-visual animate-on-scroll">
             <div className="floating-cards">
@@ -276,6 +305,7 @@ export default function Home() {
                 style={{ 
                   transform: `translate3d(${mousePos.x * 10}px, ${mousePos.y * 10}px, 0)` 
                 }}
+                onMouseEnter={() => handleCardHover(25, 'card-1')}
               >
                 <div className="card-inner">🎉</div>
                 <div className="card-glow"></div>
@@ -285,6 +315,7 @@ export default function Home() {
                 style={{ 
                   transform: `translate3d(${mousePos.x * 15}px, ${mousePos.y * 15}px, 0)` 
                 }}
+                onMouseEnter={() => handleCardHover(25, 'card-2')}
               >
                 <div className="card-inner">🤝</div>
                 <div className="card-glow"></div>
@@ -294,6 +325,7 @@ export default function Home() {
                 style={{ 
                   transform: `translate3d(${mousePos.x * 8}px, ${mousePos.y * 8}px, 0)` 
                 }}
+                onMouseEnter={() => handleCardHover(25, 'card-3')}
               >
                 <div className="card-inner">🃏</div>
                 <div className="card-glow"></div>

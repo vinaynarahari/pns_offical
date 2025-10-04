@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import "./app.css";
 import Slideshow from "../components/Slideshow";
@@ -14,7 +14,6 @@ export default function Home() {
   const [isLogoSpinning, setIsLogoSpinning] = useState(false);
   const [score, setScore] = useState(0);
   const [interactedElements, setInteractedElements] = useState(new Set());
-  const [mouseMovements, setMouseMovements] = useState(0);
   const [scrollDistance, setScrollDistance] = useState(0);
   const [clickCount, setClickCount] = useState(0);
   
@@ -31,12 +30,12 @@ export default function Home() {
     }
   };
 
-  const addScore = (points: number, elementId: string) => {
+  const addScore = useCallback((points: number, elementId: string) => {
     if (!interactedElements.has(elementId)) {
       setScore(prev => prev + points);
       setInteractedElements(prev => new Set(prev).add(elementId));
     }
-  };
+  }, [interactedElements]);
 
   const addInstantScore = (points: number) => {
     setScore(prev => prev + points);
@@ -55,29 +54,25 @@ export default function Home() {
     addScore(points, elementId);
   };
 
-  const handleMouseMovement = () => {
-    setMouseMovements(prev => {
-      const newCount = prev + 1;
-      // Award points for every 100 mouse movements
-      if (newCount % 100 === 0) {
-        addInstantScore(10);
-      }
-      return newCount;
-    });
-  };
+  const handleMouseMovement = useCallback(() => {
+    // Award points for mouse movement (simplified)
+    if (Math.random() < 0.01) { // 1% chance per movement
+      addInstantScore(1);
+    }
+  }, []);
 
-  const handleGeneralClick = () => {
+  const handleGeneralClick = useCallback(() => {
     setClickCount(prev => prev + 1);
     addInstantScore(1); // 1 point for any click
-  };
+  }, []);
 
-  const handleScroll = (scrollTop: number) => {
+  const handleScroll = useCallback((scrollTop: number) => {
     const newDistance = Math.floor(scrollTop / 100);
     if (newDistance > scrollDistance) {
       addInstantScore(2); // 2 points per 100px scrolled
       setScrollDistance(newDistance);
     }
-  };
+  }, [scrollDistance]);
 
   const timelineEvents = [
     {
@@ -224,7 +219,7 @@ export default function Home() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('click', handleGeneralClick);
     };
-  }, [timelineEvents.length, addScore]); // Include timelineEvents.length and addScore dependencies
+  }, [timelineEvents.length, addScore, handleGeneralClick, handleMouseMovement, handleScroll]); // Include all dependencies
 
   return (
     <main className="jeton-style">

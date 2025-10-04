@@ -11,11 +11,12 @@ export default function Home() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorFollowerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const timelineWrapperRef = useRef<HTMLDivElement>(null);
   const [isLogoSpinning, setIsLogoSpinning] = useState(false);
   const [score, setScore] = useState(0);
   const [interactedElements, setInteractedElements] = useState(new Set());
+  const [mouseMovements, setMouseMovements] = useState(0);
+  const [scrollDistance, setScrollDistance] = useState(0);
+  const [clickCount, setClickCount] = useState(0);
   
   const handleLogoClick = () => {
     if (!isLogoSpinning) {
@@ -37,12 +38,45 @@ export default function Home() {
     }
   };
 
+  const addInstantScore = (points: number) => {
+    setScore(prev => prev + points);
+  };
+
   const handleButtonClick = (points: number, elementId: string) => {
     addScore(points, elementId);
+    setClickCount(prev => prev + 1);
+    // Bonus for click streaks
+    if (clickCount > 0 && clickCount % 10 === 0) {
+      addInstantScore(50); // Bonus for 10 clicks
+    }
   };
 
   const handleCardHover = (points: number, elementId: string) => {
     addScore(points, elementId);
+  };
+
+  const handleMouseMovement = () => {
+    setMouseMovements(prev => {
+      const newCount = prev + 1;
+      // Award points for every 100 mouse movements
+      if (newCount % 100 === 0) {
+        addInstantScore(10);
+      }
+      return newCount;
+    });
+  };
+
+  const handleGeneralClick = () => {
+    setClickCount(prev => prev + 1);
+    addInstantScore(1); // 1 point for any click
+  };
+
+  const handleScroll = (scrollTop: number) => {
+    const newDistance = Math.floor(scrollTop / 100);
+    if (newDistance > scrollDistance) {
+      addInstantScore(2); // 2 points per 100px scrolled
+      setScrollDistance(newDistance);
+    }
   };
 
   const timelineEvents = [
@@ -92,42 +126,18 @@ export default function Home() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     animatedElements.forEach((el) => observer.observe(el));
 
-    // --- Timeline Scroll Logic ---
-    const currentSlideRef = { current: 0 }; // Use a ref to avoid stale state in the closure
-    
-    const handleTimelineScroll = () => {
-      if (!timelineWrapperRef.current) return;
-      
-      const wrapper = timelineWrapperRef.current;
-      const rect = wrapper.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      
-      const scrollableHeight = rect.height - viewportHeight;
-      if (scrollableHeight < 0) return;
-
-      const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
-      
-      let newSlide = Math.floor(progress * timelineEvents.length);
-      newSlide = Math.max(0, Math.min(timelineEvents.length - 1, newSlide));
-      
-      if (newSlide !== currentSlideRef.current) {
-        currentSlideRef.current = newSlide;
-        setCurrentSlide(newSlide);
-        // Add score for scrolling through timeline
-        addScore(25, `timeline-${newSlide}`);
-      }
-    };
     
     // --- Main Scroll Handler ---
-    const handleScroll = () => {
+    const handleScrollEvent = () => {
       requestAnimationFrame(() => {
         // Hero parallax
         const scrolled = window.pageYOffset;
         if (heroRef.current) heroRef.current.style.transform = `translate3d(0, ${scrolled * 0.2}px, 0)`;
         if (waveRef.current) waveRef.current.style.transform = `translate3d(0, ${scrolled * 0.05}px, 0)`;
         
-        // Timeline update - immediate response
-        handleTimelineScroll();
+        
+        // Add scroll scoring
+        handleScroll(scrolled);
       });
     };
 
@@ -140,6 +150,7 @@ export default function Home() {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
       updateCursor(e);
+      handleMouseMovement();
     };
 
     // --- Magnetic Button Logic ---
@@ -166,9 +177,9 @@ export default function Home() {
     });
 
     // --- Event Listener Setup ---
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScrollEvent, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    handleTimelineScroll(); // Initial check
+    window.addEventListener('click', handleGeneralClick, { passive: true });
 
     // Counter animation
     const animateCounters = () => {
@@ -209,8 +220,9 @@ export default function Home() {
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScrollEvent);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('click', handleGeneralClick);
     };
   }, [timelineEvents.length, addScore]); // Include timelineEvents.length and addScore dependencies
 
@@ -353,15 +365,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Slideshow Section (between Hero and Choose Your Mission) */}
+      {/* Slideshow Section */}
       <section className="slideshow-section" style={{ paddingTop: "8rem", paddingBottom: "8rem", background: "linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(255,255,255,0.01) 100%)" }}>
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem" }}>
           <div className="section-header animate-on-scroll">
             <h2>CHECK OUT OUR LATEST EVENT</h2>
             <div className="section-decoration"></div>
           </div>
-          <div className="slideshow-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 1rem" }}>
-            <div style={{ width: "100%", maxWidth: "900px" }}>
+          <div className="slideshow-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 1rem", position: "relative", zIndex: "1" }}>
+            <div style={{ width: "100%", maxWidth: "900px", aspectRatio: "16/9", overflow: "hidden", borderRadius: "20px", position: "relative" }}>
               <Slideshow
                 autoPlayMs={6000}
                 items={[
@@ -482,156 +494,47 @@ We bring together people who love cards, food, and giving back. It&apos;s more t
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="process-section">
-        <div className="container">
-          <div className="section-header animate-on-scroll">
-            <h2>GAME INSTRUCTIONS</h2>
-            <div className="section-decoration"></div>
-          </div>
-          <div className="process-steps animate-on-scroll">
-            <div className="process-grid">
-              <div 
-                className="process-step"
-                onMouseEnter={() => handleCardHover(15, 'step-join')}
-              >
-                <div className="step-number-container">
-                  <div className="step-number">01</div>
-                  <div className="step-line"></div>
-                </div>
-                <div className="step-content">
-                  <h3>JOIN</h3>
-                  <p>Sign up for our community</p>
-                </div>
-              </div>
-              <div 
-                className="process-step"
-                onMouseEnter={() => handleCardHover(15, 'step-participate')}
-              >
-                <div className="step-number-container">
-                  <div className="step-number">02</div>
-                  <div className="step-line"></div>
-                </div>
-                <div className="step-content">
-                  <h3>PARTICIPATE</h3>
-                  <p>Attend events and trade cards</p>
-                </div>
-              </div>
-              <div 
-                className="process-step"
-                onMouseEnter={() => handleCardHover(15, 'step-giveback')}
-              >
-                <div className="step-number-container">
-                  <div className="step-number">03</div>
-                  <div className="step-line"></div>
-                </div>
-                <div className="step-content">
-                  <h3>GIVE BACK</h3>
-                  <p>Help feed families in need</p>
-                </div>
-              </div>
-              <div 
-                className="process-step"
-                onMouseEnter={() => handleCardHover(15, 'step-connect')}
-              >
-                <div className="step-number-container">
-                  <div className="step-number">04</div>
-                </div>
-                <div className="step-content">
-                  <h3>CONNECT</h3>
-                  <p>Build lasting friendships</p>
-                </div>
-              </div>
-              <div 
-                className="process-step"
-                onMouseEnter={() => handleCardHover(15, 'step-grow')}
-              >
-                <div className="step-number-container">
-                  <div className="step-number">05</div>
-                </div>
-                <div className="step-content">
-                  <h3>GROW</h3>
-                  <p>Expand your collection and impact</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Vertical Scroll Timeline */}
+      {/* Horizontal Events Timeline */}
       <section className="events-section">
         <div className="container">
           <div className="section-header animate-on-scroll">
             <h2>UPCOMING EVENTS</h2>
-            <p>Scroll down to explore our upcoming events.</p>
+            <p>Scroll horizontally to see all our upcoming events</p>
             <div className="section-decoration"></div>
           </div>
-          <div className="timeline-container">
-            <div className="timeline-interactive-wrapper" ref={timelineWrapperRef}>
-              <div className="timeline-viewport">
-                <div className="timeline-slides">
-                  {timelineEvents.map((event, index) => (
-                    <div key={index} className={`timeline-slide ${index === currentSlide ? 'active' : ''}`}>
-                      <div className="timeline-slide-content">
-                        <div className="timeline-slide-card">
-                          <div className="timeline-slide-date">{event.date}</div>
-                          <div className="difficulty-badge-small">{event.difficulty}</div>
-                          <h3 className="timeline-slide-title" dangerouslySetInnerHTML={{ __html: event.title }}></h3>
-                          <p className="timeline-slide-description">{event.description}</p>
-                          <a 
-                            href="#" 
-                            className="timeline-slide-cta"
-                            onClick={() => handleButtonClick(40, `event-${index}`)}
-                          >
-                            {event.cta}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          <div className="events-timeline-horizontal">
+            <div className="timeline-track">
+              {timelineEvents.map((event, index) => (
+                <div 
+                  key={index} 
+                  className="timeline-event animate-on-scroll"
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                  onMouseEnter={() => handleCardHover(30, `timeline-event-${index}`)}
+                >
+                  <div className="timeline-marker">
+                    <div className="marker-dot"></div>
+                    <div className="marker-date">{event.date}</div>
+                  </div>
+                  <div className="timeline-content">
+                    <div className="difficulty-badge-small">{event.difficulty}</div>
+                    <h3 className="timeline-title" dangerouslySetInnerHTML={{ __html: event.title }}></h3>
+                    <p className="timeline-description">{event.description}</p>
+                    <button 
+                      className="timeline-cta magnetic-button"
+                      onClick={() => handleButtonClick(40, `timeline-cta-${index}`)}
+                    >
+                      <span>{event.cta}</span>
+                      <div className="button-ripple"></div>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials-section">
-        <div className="container">
-          <div className="section-header animate-on-scroll">
-            <h2>Hear it from our community</h2>
-            <div className="section-decoration"></div>
-          </div>
-          <div className="testimonials-grid">
-            <div className="testimonial-card animate-on-scroll hover-lift" style={{ animationDelay: '0.1s' }}>
-              <div className="testimonial-rating">★★★★★</div>
-              <p>&ldquo;Amazing community! Love how we can trade cards while helping families in need.&rdquo;</p>
-              <div className="testimonial-author">Sarah M.</div>
-              <div className="card-shine"></div>
-            </div>
-            <div className="testimonial-card animate-on-scroll hover-lift" style={{ animationDelay: '0.2s' }}>
-              <div className="testimonial-rating">★★★★★</div>
-              <p>&ldquo;The Pizza Palooza event was incredible. 7,000 meals raised in one night!&rdquo;</p>
-              <div className="testimonial-author">Mike T.</div>
-              <div className="card-shine"></div>
-            </div>
-            <div className="testimonial-card animate-on-scroll hover-lift" style={{ animationDelay: '0.3s' }}>
-              <div className="testimonial-rating">★★★★★</div>
-              <p>&ldquo;Great organization doing amazing work in our community. Highly recommend!&rdquo;</p>
-              <div className="testimonial-author">Lisa R.</div>
-              <div className="card-shine"></div>
-            </div>
-            <div className="testimonial-card animate-on-scroll hover-lift" style={{ animationDelay: '0.4s' }}>
-              <div className="testimonial-rating">★★★★★</div>
-              <p>&ldquo;I&rsquo;ve met so many great people through Packs N&rsquo; Snacks. It&rsquo;s more than just a hobby group; it&rsquo;s a family.&rdquo;</p>
-              <div className="testimonial-author">David P.</div>
-              <div className="card-shine"></div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="cta-section">

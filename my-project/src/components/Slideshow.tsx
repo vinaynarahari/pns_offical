@@ -95,7 +95,7 @@ export default function Slideshow({ items, autoPlayMs = 5000, className = "" }: 
     <div className={`relative w-full max-w-4xl mx-auto ${className}`}>
       <div
         ref={containerRef}
-        className={`relative w-full bg-black ${isFullscreen ? '' : 'rounded-2xl'} overflow-hidden shadow-2xl ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}
+        className={`relative w-full bg-black ${isFullscreen ? '' : 'rounded-2xl'} overflow-hidden shadow-2xl ${isFullscreen ? 'fixed inset-0 z-50' : 'relative'}`}
         onMouseEnter={stopAutoplay}
         onMouseLeave={startAutoplay}
         style={{ 
@@ -162,7 +162,7 @@ export default function Slideshow({ items, autoPlayMs = 5000, className = "" }: 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 60,
+            zIndex: isFullscreen ? 60 : 10,
             fontSize: '20px',
             fontWeight: '900',
             fontFamily: 'Courier New, monospace',
@@ -205,7 +205,7 @@ export default function Slideshow({ items, autoPlayMs = 5000, className = "" }: 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 50,
+                zIndex: isFullscreen ? 50 : 5,
                 fontSize: '32px',
                 fontWeight: '900',
                 fontFamily: 'Courier New, monospace',
@@ -247,7 +247,7 @@ export default function Slideshow({ items, autoPlayMs = 5000, className = "" }: 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 50,
+                zIndex: isFullscreen ? 50 : 5,
                 fontSize: '32px',
                 fontWeight: '900',
                 fontFamily: 'Courier New, monospace',
@@ -271,7 +271,7 @@ export default function Slideshow({ items, autoPlayMs = 5000, className = "" }: 
             </button>
 
             {/* Dots Navigation */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+            <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 ${isFullscreen ? 'z-10' : 'z-[5]'}`}>
               {safeItems.map((_, i) => (
                 <button
                   key={i}

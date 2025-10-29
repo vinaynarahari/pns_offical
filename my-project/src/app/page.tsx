@@ -83,21 +83,21 @@ export default function Home() {
       difficulty: "EASY"
     },
     {
-      date: "October 25th", 
+      date: "TBD",
       title: "Doughnuts, Go Nuts,<br />Trade Day",
       description: "Fuel up on doughnuts and trade cards while supporting food relief efforts in the community.",
       cta: "Get Involved →",
       difficulty: "MEDIUM"
     },
     {
-      date: "December 20th",
-      title: "Black Tie Gala", 
+      date: "TBD",
+      title: "Black Tie Gala",
       description: "Dress to impress for an evening of elevated collecting, cocktails, and charitable giving.",
       cta: "Join Us →",
       difficulty: "EXPERT"
     },
     {
-      date: "June 18",
+      date: "TBD",
       title: "The Chip Contest",
       description: "Enter our high-stakes chip-eating showdown while browsing one-of-a-kind trading card finds.",
       cta: "Register →",
@@ -293,15 +293,16 @@ export default function Home() {
           <div className="hero-text animate-on-scroll">
             {/* Retro Logo Container */}
             <div className="logo-container animate-on-scroll">
-              <Image 
-                src="/FINAl_ps_mat-16-removebg-preview.png" 
-                alt="Packs N' Snacks Logo" 
+              <Image
+                src="/packsnsnacksoct6.gif"
+                alt="Packs N' Snacks Logo"
                 width={280}
                 height={280}
                 className={`logo-image ${isLogoSpinning ? 'spinning' : ''}`}
                 onClick={handleLogoClick}
                 onAnimationEnd={handleLogoAnimationEnd}
                 priority
+                unoptimized
               />
             </div>
             
@@ -391,41 +392,97 @@ export default function Home() {
             <div className="section-decoration"></div>
           </div>
           <div className="features-grid">
-            <div 
+            <div
               className="feature-card animate-on-scroll hover-tilt"
               onMouseEnter={() => handleCardHover(30, 'feature-events')}
             >
-              <div className="feature-icon">🎯</div>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M38 6H34V4C34 2.9 33.1 2 32 2C30.9 2 30 2.9 30 4V6H18V4C18 2.9 17.1 2 16 2C14.9 2 14 2.9 14 4V6H10C7.79 6 6.02 7.79 6.02 10L6 42C6 44.21 7.79 46 10 46H38C40.21 46 42 44.21 42 42V10C42 7.79 40.21 6 38 6ZM38 42H10V16H38V42Z" fill="url(#event-gradient)"/>
+                  <path d="M24 28C26.7614 28 29 25.7614 29 23C29 20.2386 26.7614 18 24 18C21.2386 18 19 20.2386 19 23C19 25.7614 21.2386 28 24 28Z" fill="url(#event-gradient)"/>
+                  <defs>
+                    <linearGradient id="event-gradient" x1="6" y1="2" x2="42" y2="46" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#ff0000"/>
+                      <stop offset="1" stopColor="#ff6600"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
               <h3>EVENTS</h3>
               <p>Join exciting food-eating competitions and share snacks
 From hot dog contests to cookie challenges, our events are built for fun-and fueled by flavor.</p>
             </div>
-            <div 
-              className="feature-card animate-on-scroll hover-tilt" 
+            <div
+              className="feature-card animate-on-scroll hover-tilt"
               style={{ animationDelay: '0.1s' }}
               onMouseEnter={() => handleCardHover(30, 'feature-giveback')}
             >
-              <div className="feature-icon">🤝</div>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M33.6 8C29.12 8 25.36 10.4 24 13.92C22.64 10.4 18.88 8 14.4 8C8.96 8 4.64 12.32 4.64 17.76C4.64 24.72 11.2 30.64 21.52 39.92L24 42.16L26.48 39.88C36.8 30.64 43.36 24.72 43.36 17.76C43.36 12.32 39.04 8 33.6 8Z" fill="url(#heart-gradient)"/>
+                  <defs>
+                    <linearGradient id="heart-gradient" x1="4.64" y1="8" x2="43.36" y2="42.16" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#00ac4c"/>
+                      <stop offset="1" stopColor="#22c55e"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
               <h3>GIVE BACK</h3>
               <p>Support families across the U.S. by attending events or entering raffles
 Every ticket purchased and every bite taken helps us provide meals through Feeding&nbsp;America.</p>
             </div>
-            <div 
-              className="feature-card animate-on-scroll hover-tilt" 
+            <div
+              className="feature-card animate-on-scroll hover-tilt"
               style={{ animationDelay: '0.2s' }}
               onMouseEnter={() => handleCardHover(30, 'feature-trade')}
             >
-              <div className="feature-icon">🃏</div>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="6" y="10" width="24" height="32" rx="2" fill="url(#card-gradient)" stroke="#ffff00" strokeWidth="2"/>
+                  <rect x="18" y="6" width="24" height="32" rx="2" fill="url(#card-gradient2)" stroke="#ff00ff" strokeWidth="2"/>
+                  <path d="M24 18L26 22H28L25 26L23 22H21L24 18Z" fill="#ffff00"/>
+                  <defs>
+                    <linearGradient id="card-gradient" x1="6" y1="10" x2="30" y2="42" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#0066ff"/>
+                      <stop offset="1" stopColor="#9900ff"/>
+                    </linearGradient>
+                    <linearGradient id="card-gradient2" x1="18" y1="6" x2="42" y2="38" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#ff0000"/>
+                      <stop offset="1" stopColor="#ff6600"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
               <h3>TRADE</h3>
               <p>Buy, sell, and trade cards with fellow collectors
 Whether you&apos;re new to the hobby or a seasoned collector, our shows are built for connection-and deals.</p>
             </div>
-            <div 
-              className="feature-card animate-on-scroll hover-tilt" 
+            <div
+              className="feature-card animate-on-scroll hover-tilt"
               style={{ animationDelay: '0.3s' }}
               onMouseEnter={() => handleCardHover(30, 'feature-community')}
             >
-              <div className="feature-icon">💬</div>
+              <div className="feature-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="24" cy="14" r="8" fill="url(#people-gradient)"/>
+                  <circle cx="38" cy="18" r="6" fill="url(#people-gradient)" opacity="0.8"/>
+                  <circle cx="10" cy="18" r="6" fill="url(#people-gradient)" opacity="0.8"/>
+                  <path d="M24 26C17.37 26 12 28.69 12 32V38H36V32C36 28.69 30.63 26 24 26Z" fill="url(#people-gradient2)"/>
+                  <path d="M38 28C35.79 28 33.87 28.53 32.47 29.36C34.07 30.82 35 32.67 35 34.67V38H44V34C44 31.24 41.31 28 38 28Z" fill="url(#people-gradient2)" opacity="0.8"/>
+                  <path d="M9.53 28C12.24 28 14.47 30 15.53 32.36C14.13 31.53 12.21 31 10 31C7.69 31 5.93 31.69 4.53 32.64C4.19 31.82 4 30.93 4 30C4 28.9 6.24 28 9.53 28Z" fill="url(#people-gradient2)" opacity="0.8"/>
+                  <defs>
+                    <linearGradient id="people-gradient" x1="10" y1="10" x2="38" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#ffff00"/>
+                      <stop offset="1" stopColor="#ff6600"/>
+                    </linearGradient>
+                    <linearGradient id="people-gradient2" x1="4" y1="26" x2="44" y2="38" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#00ffff"/>
+                      <stop offset="1" stopColor="#0066ff"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
               <h3>COMMUNITY</h3>
               <p>Connect with fellow collectors and share your passion
 We bring together people who love cards, food, and giving back. It&apos;s more than a hobby-it&apos;s a&nbsp;movement.</p>
@@ -449,11 +506,11 @@ We bring together people who love cards, food, and giving back. It&apos;s more t
                 </div>
                 <div className="impact-feature animate-item">
                   <span className="feature-check">✓</span>
-                  <span>1,400+ families supported</span>
+                  <span>1.2k families helped</span>
                 </div>
                 <div className="impact-feature animate-item">
                   <span className="feature-check">✓</span>
-                  <span>50+ community events hosted</span>
+                  <span>7+ events hosted</span>
                 </div>
               </div>
             </div>
@@ -467,19 +524,19 @@ We bring together people who love cards, food, and giving back. It&apos;s more t
                   <div className="stat-unit">K</div>
                   <div className="stat-label">Meals Provided</div>
                 </div>
-                <div 
+                <div
                   className="stat-item pulse-animation"
                   onMouseEnter={() => handleCardHover(20, 'stat-families')}
                 >
-                  <div className="stat-number counter" data-target="1.4">0</div>
+                  <div className="stat-number counter" data-target="1.2">0</div>
                   <div className="stat-unit">K</div>
                   <div className="stat-label">Families Helped</div>
                 </div>
-                <div 
+                <div
                   className="stat-item pulse-animation"
                   onMouseEnter={() => handleCardHover(20, 'stat-events')}
                 >
-                  <div className="stat-number counter" data-target="50">0</div>
+                  <div className="stat-number counter" data-target="7">0</div>
                   <div className="stat-unit">+</div>
                   <div className="stat-label">Events Hosted</div>
                 </div>
@@ -537,13 +594,16 @@ We bring together people who love cards, food, and giving back. It&apos;s more t
           <div className="cta-content animate-on-scroll">
             <h2>1,000+ FAMILIES HELPED. JOIN US TO HELP MORE.</h2>
             <p>It only takes a few minutes to get started.</p>
-            <button 
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfjzO4emM2DGKMKOQKPPYt-V1ICQPOcFGWrEiok05EPTB4-0Q/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
               className="cta-button primary large magnetic-button"
               onClick={() => handleButtonClick(200, 'final-cta')}
             >
               <span>Join Us Now!</span>
               <div className="button-ripple"></div>
-            </button>
+            </a>
           </div>
         </div>
       </section>
